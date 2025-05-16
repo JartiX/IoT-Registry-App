@@ -116,11 +116,15 @@ def register_device(device: DeviceRegistration, tasks: BackgroundTasks):
     )
     user_device_links["devices"][device_id] = []
 
-    chat_ids = [
+    owner_chat_ids = [
         u["chat_id"]
         for u in users.values()
+        if u["username"] == device.owner
+        
     ]
-    tasks.add_task(send_telegram_notification, message, chat_ids)
+    tasks.add_task(send_telegram_notification, message, owner_chat_ids) # Notification to owner if registered
+
+    tasks.add_task(send_telegram_notification, message) # Notification to admin
 
     return {"device_id": device_id, "topic": topic}
 
